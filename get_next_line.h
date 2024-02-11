@@ -9,6 +9,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include <string.h>
 
 char	*get_next_line(int fd);
 
@@ -17,5 +18,11 @@ size_t	ft_strlen(const char *str);
 char	*ft_strjoin(char const *s1, char const *s2);
 
 char	*ft_strchr(const char *s, int c);
+
+void	*ft_memset(void *s, int c, size_t n);
+
+void	*ft_calloc(size_t nmemb, size_t size);
+
+void	ft_free_everything(void *ptr);
 
 #endif

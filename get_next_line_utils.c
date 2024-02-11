@@ -40,3 +40,49 @@ char	*ft_strchr(const char *s, int c)
 	}
 	return (NULL);
 }
+
+/* Set N bytes of S to C.  */
+void	*ft_memset(void *s, int c, size_t n)
+{
+	char	*ptr;
+
+	ptr = s;
+	while (n--)
+		*ptr++ = c;
+	return (s);
+}
+
+/* Allocate NMEMB elements of SIZE bytes each, all initialized to 0.  */
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	void	*ptr;
+
+	if (!nmemb || !size)
+		return (NULL);
+	ptr = malloc(nmemb * size);
+	if (!ptr)
+		return (NULL);
+	ft_memset(ptr, '\0', (nmemb * size));
+	return (ptr);
+}
+
+void	ft_free_everything(void *ptr)
+{
+	free(ptr);
+}
+// size_t	ft_strlcpy(char *dst, const char *src, size_t size)
+// {
+// 	char	*copied;
+// 	int		i;
+
+// 	i = 0;
+
+// 	copied[i] = 0;
+// 	return (copied);
+// }
+
+// int	ft_read(int fd, char *buf, size_t bytes)
+// {
+
+// 	return (0);
+// }
