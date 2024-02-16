@@ -1,3 +1,6 @@
+// To-do list :
+// - Check max 'nmemb'& 'size' in  (int overflow)
+
 // Required functions :
 // strjoin	ok
 // strchr	ok
@@ -13,7 +16,7 @@ char	*get_next_line(int fd)
 	char			*line;
 	static char		*static_buf;
 	static char		*str_buf;
-	unsigned int	len;
+	size_t			len;
 	char			*newline_found;
 	char			*buf;
 
@@ -31,18 +34,21 @@ char	*get_next_line(int fd)
 	len = 0;
 	while (!ft_strchr(static_buf, '\n'))
 	{
+		/* Set all str_buf bytes to 0 */
 		ft_memset(str_buf, '\0', BUFFER_SIZE);
+
+		/* Read BUFFER_SIZE in fd & store it to str_buf */
 		read(fd, str_buf, BUFFER_SIZE);
+
+		/* Store address of '\n' char found in str_buf, it will store null ptr if not found */
 		newline_found = ft_strchr(str_buf, '\n');
 
-		// Increment line length
-		len += ft_strlen(str_buf);
 		if (newline_found)
 		{
 			// strdup || substr || strlcpy ||
-			// Calculate '\n' position & append it to 'len'
-			len += (newline_found - str_buf + 1);
-			line = ft_calloc((len + 1), sizeof(char));
+			// Calculate lenght until '\n' position & append it to 'len'
+			len += (newline_found - str_buf + 1); // +1 for the found character --------------??
+			line = ft_calloc((len + 1), sizeof(char)); // +1 for the null terminating char
 			if(!line)
 			{
 				free(line);
@@ -56,6 +62,8 @@ char	*get_next_line(int fd)
 		}
 		else
 		{
+			/* Increment line length */
+			len += ft_strlen(str_buf); // ----------------------------------------------------??
 			buf = malloc(sizeof(char) * ft_strlen(line) + 1);
 			if (!buf)
 			{
@@ -88,6 +96,7 @@ int	main(void)
 	char			*calloc_mem_space;
 	unsigned int	mem_space_len;
 	int				calloc_size;
+	char			*str_test =  "This is a string test !";
 
 	my_str = malloc(sizeof(char) * 10);
 	if (!my_str)
@@ -97,7 +106,7 @@ int	main(void)
 	if (open_testfile_fd < 0)
 		return (-1);
 
-	printf("testfile fd open : %d\n", open_testfile_fd);
+	printf("Opened file descriptor : %d\n", open_testfile_fd);
 
 	// printf("\nresult : %s\n\n", get_next_line(open_testfile_fd));
 
@@ -125,7 +134,12 @@ int	main(void)
 
 	printf("\nmemspace : %s\n", mem_space);
 
-	printf("strdup test : %s\n", ft_strdup("duplication test"));
+	printf("ptr 'T' : %p\n", ft_strchr(str_test, 'T'));
+	printf("ptr 'e' : %p\n", ft_strchr(str_test, 'e'));
+
+	printf("len diff : %ld\n", ft_strchr(str_test, 'e') - ft_strchr(str_test, 'T'));
+
+	// printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
 
 	free(mem_space);
 	free(calloc_mem_space);

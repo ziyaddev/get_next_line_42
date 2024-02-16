@@ -29,14 +29,16 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (joined);
 }
 
+/* Returns a pointer to the first occurrence of C in S.  */
 char	*ft_strchr(const char *s, int c)
 {
 	if (!*s)
 		return (NULL);
-	while (*s++)
+	while (*s)
 	{
 		if (*s == (char)c)
 			return ((char *)s);
+		s++;
 	}
 	return (NULL);
 }
@@ -104,3 +106,12 @@ void	ft_free_everything(void *ptr)
 
 // 	return (0);
 // }
+
+// Process : 
+//	- read 4 bytes
+//	- store them in str_buf
+//	- process str_buf
+//		- check if '\n' is found
+//			- if found let everything before '\n' (included) in str_buf & move everything after '\n' in static_buf
+//			- if not found don't do anything
+//	- 
