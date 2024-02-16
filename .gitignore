@@ -1,5 +1,5 @@
 # Ignore everithing ...
-# /*
+/*
 .vscode
 a.out
 *.gch
