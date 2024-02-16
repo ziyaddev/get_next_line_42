@@ -1,5 +1,8 @@
 # Ignore everithing ...
-/*
+# /*
+.vscode
+a.out
+*.gch
 
 # ... except these files
 !.gitignore
