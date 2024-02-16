@@ -2,6 +2,9 @@
 // strjoin	ok
 // strchr	ok
 // strlen	ok
+// strdup	ok
+// substr
+// strlcpy
 
 #include "get_next_line.h"
 
@@ -16,6 +19,8 @@ char	*get_next_line(int fd)
 
 	(void)static_buf;
 
+	// Don't miss to make some checks on file descriptor like max & min fd ...
+
 	str_buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (!str_buf)
 	{
@@ -24,7 +29,7 @@ char	*get_next_line(int fd)
 	}
 
 	len = 0;
-	while (!ft_strchr(str_buf, '\n'))
+	while (!ft_strchr(static_buf, '\n'))
 	{
 		ft_memset(str_buf, '\0', BUFFER_SIZE);
 		read(fd, str_buf, BUFFER_SIZE);
@@ -80,13 +85,18 @@ int	main(void)
 	int				open_testfile_fd;
 	char			*my_str;
 	char			*mem_space;
+	char			*calloc_mem_space;
 	unsigned int	mem_space_len;
+	int				calloc_size;
 
 	my_str = malloc(sizeof(char) * 10);
 	if (!my_str)
 		return (-1);
 
 	open_testfile_fd = open("./test.txt", O_RDONLY);
+	if (open_testfile_fd < 0)
+		return (-1);
+
 	printf("testfile fd open : %d\n", open_testfile_fd);
 
 	// printf("\nresult : %s\n\n", get_next_line(open_testfile_fd));
@@ -101,15 +111,24 @@ int	main(void)
 
 	printf("\nstr chr : %s\n", ft_strchr("salam akhi", 'k'));
 
-	mem_space_len = 15;
-	mem_space = ft_calloc(mem_space_len, 1);
+	mem_space_len = 6;
+	calloc_size = 6500;
+
+	mem_space = ft_calloc(mem_space_len, calloc_size);
+	calloc_mem_space = calloc(mem_space_len, calloc_size);
 
 	for (size_t i = 0; i < mem_space_len; i++)
 	{
-		printf("memspace %ld : %c\n", i, mem_space[i]);
+		printf("ft_calloc memspace %ld : %c\t", i, mem_space[i]);
+		printf("calloc memspace %ld : %c\n", i, calloc_mem_space[i]);
 	}
 
-	printf("\nsizeof : %ld\n", sizeof(char));
+	printf("\nmemspace : %s\n", mem_space);
+
+	printf("strdup test : %s\n", ft_strdup("duplication test"));
+
+	free(mem_space);
+	free(calloc_mem_space);
 
 	close(open_testfile_fd);
 	return (0);
