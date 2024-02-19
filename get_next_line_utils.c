@@ -80,6 +80,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (ptr);
 }
 
+/* Returns a pointer to a new string which is a duplicate of the string s.  */
 char	*ft_strdup(const char *s)
 {
 	char	*dup;
@@ -101,6 +102,21 @@ char	*ft_strdup(const char *s)
 void	ft_free_everything(void *ptr)
 {
 	free(ptr);
+}
+
+/* Copies src string, null byte included, to dest.  */
+char	*ft_strcpy(char *dest, const char *src)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
 }
 // size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 // {
