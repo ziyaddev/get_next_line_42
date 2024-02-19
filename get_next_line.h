@@ -38,6 +38,8 @@ void	*ft_calloc(size_t nmemb, size_t size);
 
 char	*ft_strdup(const char *s);
 
+char	*ft_strcpy(char *dest, const char *src);
+
 void	ft_free_everything(void *ptr);
 
 #endif
