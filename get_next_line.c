@@ -1,3 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zakchouc <zakchouc@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:46:33 by zakchouc          #+#    #+#             */
+/*   Updated: 2024/02/19 01:17:15 by zakchouc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/**
+ * @file get_next_line.c
+ * @author Ziyad A. Dev (zakchouc@student.42.fr)
+ * @brief		Write a function that returns a line read from a file descriptor
+ * 				Allowed functions(s) : read, malloc, free
+ * @param fd	The file descriptor to read from
+ * @return		Read line : correct behavior 
+ * 				NULL : there is nothing else to read, or an error occurred
+ * @version 0.1
+ * @date 2023-12-06
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
+// ssize_t read(int fd, void *buf, size_t count);
+
 // To-do list :
 // - Check max 'nmemb'& 'size' in  (int overflow)
 
