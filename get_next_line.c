@@ -43,13 +43,12 @@
 char	*get_next_line(int fd)
 {
 	char			*line;
-	static char		*static_buf;
-	static char		*str_buf;
-	size_t			len;
+	static char		*static_buf;	// Used to store the remaining chars after '\n'
+	char			*str_buf;		// Used to store the read chars from file descriptor
 	char			*newline_found;
 	char			*buf;
-
-	(void)static_buf;
+	size_t			len;
+	int				i;
 
 	// Don't miss to make some checks on file descriptor like max & min fd ...
 
@@ -61,9 +60,9 @@ char	*get_next_line(int fd)
 	}
 
 	len = 0;
-	while (!ft_strchr(static_buf, '\n'))
+	while (!ft_strchr(str_buf, '\n'))
 	{
-		/* Set all str_buf bytes to 0 */
+		/* Set all str_buf bytes to 0 to prevent ...? */
 		ft_memset(str_buf, '\0', BUFFER_SIZE);
 
 		/* Read BUFFER_SIZE in fd & store it to str_buf */
@@ -76,7 +75,7 @@ char	*get_next_line(int fd)
 		{
 			// strdup || substr || strlcpy ||
 			// Calculate lenght until '\n' position & append it to 'len'
-			len += (newline_found - str_buf + 1); // +1 for the found character --------------??
+			len += (newline_found - str_buf + 1); // +1 for the found character which is '\n' ----------??
 			line = ft_calloc((len + 1), sizeof(char)); // +1 for the null terminating char
 			if(!line)
 			{
@@ -84,27 +83,33 @@ char	*get_next_line(int fd)
 				return (NULL);
 			}
 			// Join everything before '\n'
-			ft_strjoin(line, str_buf); // str_buf begining until '\n' included
+			ft_strcpy(line, str_buf); // str_buf begining until '\n' included
 
 			// Join everything after '\n'
-			static_buf = 0;
+			i = 0;
+			newline_found++;
+			while (newline_found[i])
+			{
+				static_buf[i] = newline_found[i];
+				i++;
+			}
 		}
 		else
 		{
 			/* Increment line length */
 			len += ft_strlen(str_buf); // ----------------------------------------------------??
-			buf = malloc(sizeof(char) * ft_strlen(line) + 1);
+			buf = malloc(sizeof(char) * ft_strlen(len) + 1);
 			if (!buf)
 			{
 				ft_free_everything(buf);
 				return (NULL);
 			}
-			// > transfert 'line' content to 'buf'
-			ft_strjoin(buf, line);
-			// > free(line)
-			free(line);
-			// > malloc 'line' with new length (ft_strlen(buf) + BUFFER_SIZE)
-			line = malloc(ft_strlen(buf) + BUFFER_SIZE);
+			// > transfert 'static_buf' content to 'buf'
+			ft_strcpy(buf, str_buf);
+			// > free(static_buf)
+			free(static_buf);
+			// > malloc 'static_buf' with new length (ft_strlen(buf) + BUFFER_SIZE)
+			static_buf = malloc(ft_strlen(buf) + BUFFER_SIZE);
 			// > copy 'buf' + 'str_buf' into 'line'
 			ft_strjoin(line, str_buf); // str_buf begining until '\n' included
 
@@ -168,7 +173,10 @@ int	main(void)
 
 	printf("len diff : %ld\n", ft_strchr(str_test, 'e') - ft_strchr(str_test, 'T'));
 
-	// printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
+	printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
+	printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
+	printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
+	printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
 
 	free(mem_space);
 	free(calloc_mem_space);
