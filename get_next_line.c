@@ -6,7 +6,7 @@
 /*   By: zakchouc <zakchouc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 20:46:33 by zakchouc          #+#    #+#             */
-/*   Updated: 2024/02/19 01:17:15 by zakchouc         ###   ########.fr       */
+/*   Updated: 2024/02/21 14:42:43 by zakchouc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,38 +44,40 @@ char	*get_next_line(int fd)
 {
 	char			*line;
 	static char		*static_buf;	// Used to store the remaining chars after '\n'
-	char			*str_buf;		// Used to store the read chars from file descriptor
+	char			*read_buf;		// Used to store the read chars from file descriptor
 	char			*newline_found;
-	char			*buf;
+	char			*preprocess_buf;
 	size_t			len;
-	int				i;
+	size_t			i;
+	int				read_status;
 
 	// Don't miss to make some checks on file descriptor like max & min fd ...
 
-	str_buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
-	if (!str_buf)
-	{
-		free(str_buf);
+	read_buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
+	if (!read_buf)
 		return (NULL);
-	}
 
 	len = 0;
-	while (!ft_strchr(str_buf, '\n'))
+	static_buf = "";
+	while (!ft_strchr(static_buf, '\n'))
 	{
-		/* Set all str_buf bytes to 0 to prevent ...? */
-		ft_memset(str_buf, '\0', BUFFER_SIZE);
+		/* Set all read_buf bytes to 0 to prevent garbage values */
+		ft_memset(read_buf, '\0', BUFFER_SIZE);
 
-		/* Read BUFFER_SIZE in fd & store it to str_buf */
-		read(fd, str_buf, BUFFER_SIZE);
+		/* Read BUFFER_SIZE in fd & store it to read_buf */
+		read_status = read(fd, read_buf, BUFFER_SIZE);
 
-		/* Store address of '\n' char found in str_buf, it will store null ptr if not found */
-		newline_found = ft_strchr(str_buf, '\n');
+		/* Join new bytes read from fd to static_buf and store everything to static_buf */
+		static_buf = ft_strjoin(static_buf, read_buf);
+
+		/* Store address of '\n' char found in read_buf, it will store null ptr if not found */
+		newline_found = ft_strchr(static_buf, '\n');
 
 		if (newline_found)
 		{
 			// strdup || substr || strlcpy ||
 			// Calculate lenght until '\n' position & append it to 'len'
-			len += (newline_found - str_buf + 1); // +1 for the found character which is '\n' ----------??
+			len += (newline_found - static_buf + 1); // +1 for the found character which is '\n' ----------??
 			line = ft_calloc((len + 1), sizeof(char)); // +1 for the null terminating char
 			if(!line)
 			{
@@ -83,43 +85,67 @@ char	*get_next_line(int fd)
 				return (NULL);
 			}
 			// Join everything before '\n'
-			ft_strcpy(line, str_buf); // str_buf begining until '\n' included
-
-			// Join everything after '\n'
 			i = 0;
-			newline_found++;
-			while (newline_found[i])
+			while (i < len)
 			{
-				static_buf[i] = newline_found[i];
+				line[i] = static_buf[i];// copy begining until '\n' included
 				i++;
 			}
+
+			ft_strcpy(preprocess_buf, &static_buf[i]);
+
+			// Join everything after '\n'
+			// i = 0;
+			// newline_found++;
+			// while (newline_found[i])
+			// {
+			// 	static_buf[i] = newline_found[i];
+			// 	i++;
+			// }
 		}
 		else
 		{
 			/* Increment line length */
-			len += ft_strlen(str_buf); // ----------------------------------------------------??
-			buf = malloc(sizeof(char) * ft_strlen(len) + 1);
-			if (!buf)
+			len += ft_strlen(read_buf); // ----------------------------------------------------??
+			preprocess_buf = malloc(sizeof(char) * len + 1);
+			if (!preprocess_buf)
 			{
-				ft_free_everything(buf);
+				// ft_free_everything(buf_preprocess);
 				return (NULL);
 			}
-			// > transfert 'static_buf' content to 'buf'
-			ft_strcpy(buf, str_buf);
+			// > transfert 'static_buf' content to 'buf_preprocess'
+			ft_strcpy(preprocess_buf, read_buf);
 			// > free(static_buf)
 			free(static_buf);
-			// > malloc 'static_buf' with new length (ft_strlen(buf) + BUFFER_SIZE)
-			static_buf = malloc(ft_strlen(buf) + BUFFER_SIZE);
-			// > copy 'buf' + 'str_buf' into 'line'
-			ft_strjoin(line, str_buf); // str_buf begining until '\n' included
+			// > malloc 'static_buf' with new length (ft_strlen(buf_preprocess) + BUFFER_SIZE)
+			static_buf = malloc(ft_strlen(preprocess_buf) + BUFFER_SIZE);
+			// > copy 'buf_preprocess' + 'read_buf' into 'line'
+			ft_strjoin(line, read_buf); // read_buf begining until '\n' included
 
 		}
 
 		len += BUFFER_SIZE;
 	}
 
-	// free(str_buf);
+	// free(read_buf);
 	return (line);
+}
+
+char	*ft_static_variable_test()
+{
+	static char *static_str = "salam2";
+	int			i;
+
+	i = 0;
+	printf("static str :\n");
+	while (static_str[i])
+	{
+		printf("%d : %c\n", i, static_str[i]);
+		i++;
+	}
+
+	static_str = "salut";
+	return (static_str);
 }
 
 int	main(void)
@@ -177,6 +203,9 @@ int	main(void)
 	printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
 	printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
 	printf("Get next line function : %s\n", get_next_line(open_testfile_fd));
+
+	// printf("\nstatic variable test %s\n", ft_static_variable_test());
+	// printf("\nstatic variable test %s\n", ft_static_variable_test());
 
 	free(mem_space);
 	free(calloc_mem_space);
